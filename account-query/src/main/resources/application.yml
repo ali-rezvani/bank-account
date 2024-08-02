@@ -1,0 +1,27 @@
+server:
+  port: 5001
+spring:
+  jpa:
+    database-platform: org.hibernate.dialect.Oracle12cDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: oracle.jdbc.OracleDriver
+    url: jdbc:oracle:thin:@localhost:1521:xe
+    username: BANK_ACCOUNT
+    password: account
+  kafka:
+    listener:
+      ack-mode: manual_immediate
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: BANK_ACC_CONSUMER_QUERY
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: '*'
