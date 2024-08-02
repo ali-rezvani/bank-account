@@ -14,7 +14,7 @@ import java.time.Instant;
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
-//@SuperBuilder
+@SuperBuilder
 public class AccountOpenedEvent extends BaseEvent {
     private String accountHolder;
     private AccountType accountType;
