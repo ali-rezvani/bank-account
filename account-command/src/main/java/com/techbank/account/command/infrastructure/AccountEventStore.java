@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class AccountEventStore implements EventStore {
     private final EventStoreRepository eventStoreRepository;
     @Override
-    public void saveEvents(String aggregateId, Iterable<BaseEvent> events, int expectedVersion) {
+    public void saveEvents(UUID aggregateId, Iterable<BaseEvent> events, int expectedVersion) {
         var eventStream=eventStoreRepository.findByAggregateIdentifier(aggregateId);
         if (expectedVersion !=-1 && eventStream.get(eventStream.size()-1).getVersion()!=expectedVersion){
             throw new ConcurrencyException();
@@ -46,7 +47,7 @@ public class AccountEventStore implements EventStore {
     }
 
     @Override
-    public List<BaseEvent> getEvents(String aggregateId) {
+    public List<BaseEvent> getEvents(UUID aggregateId) {
         var eventStream=eventStoreRepository.findByAggregateIdentifier(aggregateId);
         if (eventStream.isEmpty()){
             throw new AggregateNotFoundException("Incorrect account ID provided.");
