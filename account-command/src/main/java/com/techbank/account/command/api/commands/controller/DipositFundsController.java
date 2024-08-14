@@ -1,6 +1,6 @@
 package com.techbank.account.command.api.commands.controller;
 
-import com.techbank.account.command.api.commands.OpenAccountCommand;
+import com.techbank.account.command.api.commands.DepositFundsCommand;
 import com.techbank.account.command.api.commands.dto.OpenAcountResponse;
 import com.techbank.account.common.dto.BaseResponse;
 import com.techbank.cqrs.core.infrastructure.CommandDispatcher;
@@ -8,28 +8,24 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
-@RequestMapping("api/v1/openAccount")
+@RequestMapping("api/v1/depositFunds")
 @RequiredArgsConstructor
 @Slf4j
-public class OpenAccountController {
-    private final CommandDispatcher dispatcher;
+public class DipositFundsController {
+    private final CommandDispatcher commandDispatcher;
 
-    @PostMapping
-    public ResponseEntity<BaseResponse> openAccount(@RequestBody OpenAccountCommand command) {
-        var id= UUID.randomUUID();
-        command.setId(id);
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<BaseResponse> depositFunds(@PathVariable(value = "id")UUID id, @RequestBody DepositFundsCommand command) {
         try {
-            dispatcher.send(command);
-            return new ResponseEntity<>(new OpenAcountResponse("Bank account creation completed successfully",id), HttpStatus.CREATED);
-        }catch (IllegalStateException e) {
+            command.setId(id);
+            commandDispatcher.send(command);
+            return new ResponseEntity<>(new BaseResponse("Deposit funds request completed successfully"), HttpStatus.OK);
+        }catch (IllegalStateException e){
             log.warn("Client made a bad request.",e);
             return ResponseEntity
                     .badRequest()
